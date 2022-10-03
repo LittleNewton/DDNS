@@ -3,7 +3,7 @@
 """
 DDNS
 @author: New Future
-@modified: rufengsuixing
+@modified: Peng Liu (aka littleNewton)
 """
 from __future__ import print_function
 from time import ctime
