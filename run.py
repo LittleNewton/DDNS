@@ -6,7 +6,7 @@ DDNS
 @modified: Peng Liu (aka littleNewton)
 """
 from __future__ import print_function
-from time import ctime
+from time import ctime, asctime
 from os import path, environ, name as os_name
 from tempfile import gettempdir
 from logging import DEBUG, basicConfig, info, warning, error, debug
@@ -94,8 +94,8 @@ def change_dns_record(dns, proxy_list, **kw):
         else:
             dns.PROXY = proxy
         record_type, domain = kw['record_type'], kw['domain']
-        print('\n%s(%s) ==> %s [via %s]' %
-              (domain, record_type, kw['ip'], proxy))
+        print('\n%s %s(%s) ==> %s [via %s]' %
+              (asctime(), domain, record_type, kw['ip'], proxy))
         try:
             return dns.update_record(domain, kw['ip'], record_type=record_type)
         except Exception as e:
@@ -158,7 +158,9 @@ def main():
     proxy_list = proxy if isinstance(
         proxy, list) else proxy.strip('; ').replace(',', ';').split(';')
 
-    cache = get_config('cache', True) and Cache(CACHE_FILE)
+    cache = get_config('cache', True)
+    cache = cache is True and path.join(gettempdir(), 'ddns.cache') or cache
+    cache = Cache(cache)
     if cache is False:
         info("Cache is disabled!")
     elif get_config("config_modified_time") is None or get_config("config_modified_time") >= cache.time:
